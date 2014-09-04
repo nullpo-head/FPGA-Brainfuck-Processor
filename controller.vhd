@@ -30,6 +30,7 @@ begin
         next_cout.sys_reg_control := cin.sys_reg_res;
         next_cout.bf_array_control := (write => '0', pointer => cin.sys_reg_res.array_pointer, data => "00000000");
         next_cout.write_control := default_rs232c_sender_in;
+        next_cout.read_control := default_rs232c_receiver_in;
 
         case cin.sys_reg_res.exec_mode is
             when EXEC_OP =>
@@ -55,7 +56,10 @@ begin
                         next_cout.bf_array_control.data := std_logic_vector(to_signed(to_integer(signed(cin.bf_array_res.data) - 1), 8));
                     when WRITE =>
                         next_cout.sys_reg_control.pc := cin.sys_reg_res.pc;
-                        next_cout.sys_reg_control.exec_mode := START_IO;
+                        next_cout.sys_reg_control.exec_mode := START_WRITE;
+                    when READ =>
+                        next_cout.sys_reg_control.pc := cin.sys_reg_res.pc;
+                        next_cout.sys_reg_control.exec_mode := WAIT_READ;
                     when LBRACE =>
                         if cin.bf_array_res.data = "00000000" then
                             next_cout.sys_reg_control.exec_mode := JMP_TO_RIGHT;
@@ -72,19 +76,28 @@ begin
                     when others =>
                 end case;
 
-            when START_IO =>
+            when START_WRITE =>
                 if cin.write_stat.busy = '0' then
                     next_cout.write_control.data := cin.bf_array_res.data;
                     next_cout.write_control.go := '1';
                 else
-                    next_cout.sys_reg_control.exec_mode := WAIT_IO;
+                    next_cout.sys_reg_control.exec_mode := WAIT_WRITE;
                     next_cout.write_control.go := '0';
                 end if;
 
-            when WAIT_IO =>
+            when WAIT_WRITE =>
                 if cin.write_stat.busy = '0' then
                     next_cout.sys_reg_control.exec_mode := EXEC_OP;
                     next_cout.sys_reg_control.pc := cin.sys_reg_res.pc + 1;
+                end if;
+
+            when WAIT_READ =>
+                if cin.read_stat.done = '1' then
+                    next_cout.sys_reg_control.exec_mode := EXEC_OP;
+                    next_cout.sys_reg_control.pc := cin.sys_reg_res.pc + 1;
+                    next_cout.bf_array_control.write := '1';
+                    next_cout.bf_array_control.data := cin.read_stat.data;
+                    next_cout.read_control.buf_clear := '1';
                 end if;
 
             when JMP_TO_RIGHT =>

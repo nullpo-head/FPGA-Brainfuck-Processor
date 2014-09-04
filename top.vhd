@@ -8,7 +8,8 @@ use UNISIM.VComponents.all;
 
 entity top is
   Port ( MCLK1 : in  std_logic;
-         RS_TX : out  std_logic
+         RS_TX : out  std_logic;
+         RS_RX : in  std_logic
          );
 end top;
 
@@ -16,7 +17,7 @@ architecture structure of top is
     signal clk,iclk: std_logic;
 
     component main
-        Port ( clk  : in  STD_LOGIC; tx : out STD_LOGIC);
+        Port ( clk  : in  STD_LOGIC; tx : out STD_LOGIC; rx : in STD_LOGIC);
     end component;
     component myclk
         Port(
@@ -45,7 +46,7 @@ begin
                                 );
 
 
-  m: main port map (clk=> clk_pll, tx => RS_TX);
+  m: main port map (clk=> clk_pll, tx => RS_TX, rx => RS_RX);
 
 end structure;
 

@@ -7,22 +7,24 @@ entity rs232c_sender is
   generic (wtime: std_logic_vector(15 downto 0) := x"02b6");
   Port ( clk  : in  std_logic;
          tx : out std_logic;
-         input : in rs232c_sender_in;
-         output : out rs232c_sender_out);
+         rsin : in rs232c_sender_in;
+         rsout : out rs232c_sender_out);
 end rs232c_sender;
 
 architecture rtl of rs232c_sender is
   signal countdown: std_logic_vector(15 downto 0) := (others=>'0');
   signal sendbuf: std_logic_vector(8 downto 0) := (others=> '1');
   signal state: integer range 0 to 15 := 10;
+  signal sending: std_logic_vector(7 downto 0);
 begin
   statemachine: process(clk)
   begin
     if rising_edge(clk) then
       case state is
         when 10 =>
-          if input.go = '1' then
-            sendbuf <= input.data & "0";
+          if rsin.go = '1' then
+            sending <= rsin.data;
+            sendbuf <= rsin.data & "0";
             state <= state - 1;
             countdown<=wtime;
           end if;
@@ -42,6 +44,6 @@ begin
     end if;
   end process;
   tx <= sendbuf(0);
-  output.busy <= '0' when state = 10 else '1';
+  rsout.busy <= '0' when state = 10 else '1';
 end rtl;
 

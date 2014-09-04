@@ -25,9 +25,20 @@ package interface is
     constant default_rs232c_sender_in : rs232c_sender_in := (data => (others => '0'), go => '0');
 
     type rs232c_sender_out is record
-         busy : STD_LOGIC;
+        busy : STD_LOGIC;
     end record rs232c_sender_out;
     constant default_rs232c_sender_out : rs232c_sender_out := (busy => '0');
+
+    type rs232c_receiver_in is record
+        buf_clear : std_logic;
+    end record rs232c_receiver_in;
+    constant default_rs232c_receiver_in : rs232c_receiver_in := (buf_clear => '0');
+
+    type rs232c_receiver_out is record
+        data  : std_logic_vector(7 downto 0);
+        done : std_logic;
+    end record rs232c_receiver_out;
+    constant default_rs232c_receiver_out : rs232c_receiver_out := (data => (others => '1'), done => '0');
 
     type inst_mem is array(0 to max_inst_length - 1) of std_logic_vector(7 downto 0);
 
@@ -47,15 +58,17 @@ package interface is
         bf_array_control : bf_array_in;
         sys_reg_control : sys_reg_t;
         write_control : rs232c_sender_in;
+        read_control : rs232c_receiver_in;
     end record controller_out;
-    constant default_controller_out : controller_out := (bf_array_control => default_bf_array_in, sys_reg_control => default_sys_reg_t, write_control => default_rs232c_sender_in);
+    constant default_controller_out : controller_out := (bf_array_control => default_bf_array_in, sys_reg_control => default_sys_reg_t, write_control => default_rs232c_sender_in, read_control => default_rs232c_receiver_in);
 
     type controller_in is record
         decoder_res : decoder_out;
         bf_array_res : bf_array_out;
         sys_reg_res : sys_reg_t;
         write_stat : rs232c_sender_out;
+        read_stat : rs232c_receiver_out;
     end record controller_in;
-    constant default_controller_in : controller_in := (decoder_res => default_decoder_out, bf_array_res => default_bf_array_out, sys_reg_res => default_sys_reg_t, write_stat => default_rs232c_sender_out);
+    constant default_controller_in : controller_in := (decoder_res => default_decoder_out, bf_array_res => default_bf_array_out, sys_reg_res => default_sys_reg_t, write_stat => default_rs232c_sender_out, read_stat => default_rs232c_receiver_out);
 
 end interface;

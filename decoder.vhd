@@ -6,7 +6,7 @@ use work.interface.all;
 
 entity decoder is
     Port ( instruction : in std_logic_vector (inst_width - 1 downto 0);
-           output : out decoder_out
+           dout : out decoder_out
          );
 end decoder;
 
@@ -16,25 +16,25 @@ begin
     begin
         case instruction is
             when "00111110" => -- '>'
-                output.cpu_op_code <= P_INC;
+                dout.cpu_op_code <= P_INC;
             when "00111100" => -- '<'
-                output.cpu_op_code <= P_DEC;
+                dout.cpu_op_code <= P_DEC;
             when "00101011" => -- '+'
-                output.cpu_op_code <= VAL_INC;
+                dout.cpu_op_code <= VAL_INC;
             when "00101101" => -- '-'
-                output.cpu_op_code <= VAL_DEC;
+                dout.cpu_op_code <= VAL_DEC;
             when "00101110" => -- '.'
-                output.cpu_op_code <= WRITE;
+                dout.cpu_op_code <= WRITE;
             when "00101100" => -- ','
-                output.cpu_op_code <= NOP;
+                dout.cpu_op_code <= READ;
             when "01011011" => -- '['
-                output.cpu_op_code <= LBRACE;
+                dout.cpu_op_code <= LBRACE;
             when "01011101" => -- ']'
-                output.cpu_op_code <= RBRACE;
+                dout.cpu_op_code <= RBRACE;
             when "00000000" => -- FINISH
-                output.cpu_op_code <= FINISH;
+                dout.cpu_op_code <= FINISH;
             when others =>
-                output.cpu_op_code <= UNDEFINED;
+                dout.cpu_op_code <= UNDEFINED;
         end case;
     end process;
 end core;

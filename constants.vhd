@@ -4,11 +4,11 @@ use ieee.std_logic_1164.all;
 package constants is
     type cpu_op is (
         NOP,
-       P_INC, P_DEC, VAL_INC, VAL_DEC, WRITE, LBRACE, RBRACE,
+       P_INC, P_DEC, VAL_INC, VAL_DEC, WRITE, READ, LBRACE, RBRACE,
         FINISH, UNDEFINED 
     );
     type cpu_state is (
-        EXEC_OP, START_IO, WAIT_IO, JMP_TO_RIGHT, JMP_TO_LEFT
+        EXEC_OP, START_WRITE, WAIT_WRITE, WAIT_READ, JMP_TO_RIGHT, JMP_TO_LEFT
     );
     constant inst_width : integer := 8;
     constant opcode_width : integer := 3;

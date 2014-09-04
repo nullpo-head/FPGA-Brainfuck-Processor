@@ -13,12 +13,14 @@ ARCHITECTURE behavior OF top_tb IS
   COMPONENT top
     PORT(
       MCLK1 : IN  std_logic;
+      RS_RX : IN  std_logic;
       RS_TX : OUT  std_logic
       );
   END COMPONENT;
 
   --Inputs
   signal MCLK1 : std_logic := '0';
+  signal RS_RX : std_logic;
 
   --Outputs
   signal RS_TX : std_logic;
@@ -27,7 +29,8 @@ BEGIN
   -- Instantiate the Unit Under Test (UUT)
   uut: top PORT MAP (
     MCLK1 => MCLK1,
-    RS_TX => RS_TX
+    RS_TX => RS_TX,
+    RS_RX => RS_RX
     );
 
   clkgen: process

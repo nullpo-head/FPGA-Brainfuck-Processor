@@ -6,8 +6,8 @@ use work.interface.all;
 
 entity bf_array is
     Port ( clk : in  std_logic;
-           input : in bf_array_in;
-           output : out bf_array_out
+           bin : in bf_array_in;
+           bout : out bf_array_out
        );
 end bf_array;
 
@@ -16,15 +16,15 @@ architecture rtl of bf_array is
     signal arrays : array_mem := (others => (others => '0'));
     signal addr : integer range 0 to max_array_length - 1;
 begin
-    output.data <= arrays(addr);
+    bout.data <= arrays(addr);
 
     process (clk)
     begin
         if rising_edge (clk) then
-            if input.write = '1' then
-                arrays(input.pointer) <= input.data;
+            if bin.write = '1' then
+                arrays(bin.pointer) <= bin.data;
             end if;
         end if;
-        addr <= input.pointer;
+        addr <= bin.pointer;
     end process;
 end rtl;
