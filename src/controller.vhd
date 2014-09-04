@@ -127,7 +127,8 @@ begin
 
     end process;
 
-    -- 
+    -- Main process statement was expected to work asynchronously with just "cout <= next_cout", but it worked only in simulation and failed on real FPGA.
+    -- After making "cout" synchronized with clock, the processor began to work well anyway; We need this process statement temporarily for that reason.
     process (clk)
     begin
         if falling_edge(clk) then
